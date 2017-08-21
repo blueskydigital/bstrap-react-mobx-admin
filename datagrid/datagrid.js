@@ -5,9 +5,8 @@ import _ from 'lodash'
 import HeaderBase from 'react-mobx-admin/components/common/datagrid/header'
 import * as TUtils from 'react-mobx-admin/components/common/datagrid/table'
 
-
 class BStrapHeader extends HeaderBase {
-  renderIcon(sort) {
+  renderIcon (sort) {
     return <span style={sort === 'ASC' ? { transform: 'rotate(180deg)' } : {}}>sort</span>
   }
 }
@@ -17,8 +16,7 @@ const BStrapDatagrid = ({
   onRowSelection, onSort, sortstate, listActions, allSelected,
   filters, updateFilterVal, applyFilters, hideFilter, isFilterApplied
 }) => {
-
-  function _renderHeader(name, label, sort, onSort) {
+  function _renderHeader (name, label, sort, onSort) {
     let filtername = null
     const filter = filters && _.find(filters, (v, k) => {
       filtername = k
@@ -30,11 +28,11 @@ const BStrapDatagrid = ({
         {filter ? (
           <InputGroup>
             {isFilterApplied(filtername) ?
-              <Button onClick={()=>hideFilter(filtername)} style={{float: 'left'}}>x</Button>
+              <Button onClick={() => hideFilter(filtername)} style={{float: 'left'}}>x</Button>
             : null}
             <div style={{float: 'right'}}>
               <filter.component record={state.filters}
-                attr={filtername} onChange={updateFilterVal} onKeyPress={(e) =>{
+                attr={filtername} onChange={updateFilterVal} onKeyPress={(e) => {
                   if (e.charCode === 13) {
                     e.preventDefault()
                     applyFilters()
@@ -51,7 +49,7 @@ const BStrapDatagrid = ({
     <th key={'_actions'}>{ listActions() }</th>
   ) : null
 
-  function _renderCell(row, name, creatorFn, rowId) {
+  function _renderCell (row, name, creatorFn, rowId) {
     return (
       <td key={`td_${rowId}_${name}`}>
         {creatorFn(name, row)}
@@ -59,32 +57,32 @@ const BStrapDatagrid = ({
     )
   }
 
-  function _renderRowActions(row) {
+  function _renderRowActions (row) {
     return listActions ? (
       <td key={'datagrid-actions'}>{listActions(row)}</td>
     ) : null
   }
 
-  function _onSelectAll(e) {
+  function _onSelectAll (e) {
     e.target.checked ? onRowSelection('all') : onRowSelection([])
   }
 
   const selectable = onRowSelection !== undefined && isSelected !== undefined
 
   let tableChildren = state.loading ? (
-    <tr><td>loadiny</td></tr>
+    <tr><td>loading</td></tr>
   ) : state.items.length === 0 ? (
     <tr><td>EMPTY</td></tr>
   ) : state.items.map((r, i) => {
-    const id = rowId(r)
-    const selected = selectable && isSelected(i)
+    const id = rowId(r.id)
+    const selected = selectable && isSelected(r.id)
     return (
       <tr selected={selected} key={i}>
         { selectable ?
-        <td key="chbox">
-          <Checkbox checked={selected} inline={true}
-            onChange={() => onRowSelection(i)}></Checkbox>
-        </td>
+          <td key='chbox'>
+            <Checkbox checked={selected} inline
+              onChange={() => onRowSelection(r.id)} />
+          </td>
         : null }
         {TUtils.buildCells(attrs, fields, r, rowId, _renderCell, _renderRowActions)}
       </tr>
@@ -92,13 +90,13 @@ const BStrapDatagrid = ({
   })
 
   return (
-    <table className="table table-sm">
+    <table className='table table-sm'>
       {titles ? (
         <thead>
           <tr>
-            { selectable ? <th key="chbox">
-              <Checkbox checked={allSelected} inline={true} bsClass="btn"
-                onChange={_onSelectAll}></Checkbox>
+            { selectable ? <th key='chbox'>
+              <Checkbox checked={allSelected} inline bsClass='btn'
+                onChange={_onSelectAll} />
             </th> : null }
             { TUtils.buildHeaders(attrs, titles, _renderHeader, listActionsRender, onSort, sortstate) }
           </tr>
