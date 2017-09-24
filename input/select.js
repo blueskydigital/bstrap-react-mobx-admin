@@ -3,17 +3,16 @@ import { observer } from 'mobx-react'
 import { FormGroup, ControlLabel, FormControl, HelpBlock } from 'react-bootstrap'
 
 const SelectInput = ({
-  attr, labelattr, valueattr, label, record,
+  attr, labelattr, valueattr, label, record, valueFilterFc,
   optionsrecord, optionsattr, errors, onChange, validationSuccess
 }) => {
-
   const errorText = errors ? errors.get(attr) : undefined
   const validationState = errorText ? 'error' : (validationSuccess ? 'success' : null)
   const value = record.get(attr)
   const options = optionsrecord.get(optionsattr || attr)
   valueattr = valueattr || 'value'
 
-  function handleChange(evt) {
+  function handleChange (evt) {
     if (evt.target.value.length === 0) {
       return onChange(attr, null)
     }
@@ -22,12 +21,16 @@ const SelectInput = ({
     onChange(attr, foundOpt[valueattr])
   }
 
-  function renderOptions(options, labelattr, valueattr) {
-    let opts = [<option key={'_null__'} value={''}></option>]
+  function renderOptions (options, labelattr, valueattr, valueFilterFc) {
+    let opts = [<option key={'_null__'} value={''} />]
     let idx, val, c
-    for(idx = 0; idx < options.length; idx++) {
+    for (idx = 0; idx < options.length; idx++) {
       val = options[idx]
-      const text = (typeof labelattr === "function") ? labelattr(val) : val[labelattr]
+
+      let jumpToNext = valueFilterFc && valueFilterFc(val)
+      if (jumpToNext) continue
+
+      const text = (typeof labelattr === 'function') ? labelattr(val) : val[labelattr]
       c = <option key={idx} value={val[valueattr]}>{text}</option>
       opts.push(c)
     }
@@ -35,11 +38,11 @@ const SelectInput = ({
   }
 
   const renderedOpts = options && options.length &&
-    renderOptions(options, labelattr || 'label', valueattr)
+    renderOptions(options, labelattr || 'label', valueattr, valueFilterFc)
   return (
     <FormGroup controlId={attr} validationState={validationState}>
       <ControlLabel>{label}</ControlLabel>
-      <FormControl componentClass="select" placeholder="select"
+      <FormControl componentClass='select' placeholder='select'
         value={value || ''} onChange={handleChange}>
         {renderedOpts}
       </FormControl>
