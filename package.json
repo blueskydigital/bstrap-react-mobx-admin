@@ -48,7 +48,7 @@
     "react-mobx-admin": "blueskydigital/react-mobx-admin#update",
     "tape": "^4.6.2",
     "webpack": "^3.3.0",
-    "webpack-dev-server": "^2.5.1",
+    "webpack-dev-server": "^3.9.0",
     "react-sortable-hoc": "^0.6.8"
   },
   "scripts": {
