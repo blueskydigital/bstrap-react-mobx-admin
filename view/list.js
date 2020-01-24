@@ -112,7 +112,13 @@ const BStrapListView = ({
         <div className='pull-right'>
           {(batchActions || stableBatchActions) &&
             <ButtonGroup style={{ verticalAlign: 'top ', marginRight: '0.3em' }} className='btn-group-top-right'>
-              {batchActions && (<DatagridActions state={store} actions={batchActions} />)}
+              {batchActions && (
+                <DatagridActions 
+                  state={store} 
+                  actions={batchActions} 
+                  overlay={child =>
+                    <OverlayTrigger placement='bottom' overlay={<Tooltip>{'Actions '}</Tooltip>}>{child}</OverlayTrigger>}
+                />)}
               {stableBatchActions && stableBatchActions()}
             </ButtonGroup>
           }
@@ -137,9 +143,17 @@ const BStrapListView = ({
           </ButtonGroup>
           {(onAddClicked || onAddClickedFL) &&
             <ButtonGroup style={{ verticalAlign: 'top', marginRight: '0.3em' }} className='btn-group-top-right'>
-              {onAddClicked && <Button bsStyle='primary' onClick={() => onAddClicked(store)}>{store.addText || '+'}</Button>}
-              {onAddClicked && onAddClicked2 && <Button bsStyle='primary' onClick={() => onAddClicked2(store)}>
-                {(store.addText && store.addText[0]) || '+'} {onAddClicked2text || ''}</Button>
+              {onAddClicked &&
+                <OverlayTrigger placement='bottom' overlay={<Tooltip>{'Add new item'}</Tooltip>}>
+                  <Button bsStyle='primary' onClick={() => onAddClicked(store)}>{store.addText || '+'}</Button>
+                </OverlayTrigger>
+              }
+              {onAddClicked && onAddClicked2 && (
+                <OverlayTrigger placement='bottom' overlay={<Tooltip>{onAddClicked2Tip}</Tooltip>}>
+                  <Button bsStyle='primary' onClick={() => onAddClicked2(store)}>
+                    {(store.addText && store.addText[0]) || '+'} {onAddClicked2text || ''}
+                  </Button>
+                </OverlayTrigger>)
               }
               {onAddClickedFL && <Button bsStyle='primary' onClick={() => onAddClickedFL(store)}>{store.addText || '+'} {'from last'}</Button>}
             </ButtonGroup>
