@@ -18,7 +18,7 @@ import {
 } from 'react-bootstrap'
 
 const BStrapListView = ({
-  store, onAddClicked, onAddClicked2, onAddClicked2text, onAddClickedFL, fields, filters, listActions, batchActions, renderOuter,
+  store, onAddClicked, onAddClicked2, onAddClicked2text, onAddClicked2tip, onAddClickedFL, fields, filters, listActions, batchActions, renderOuter,
   perPageOptions, stableBatchActions, selectable = true, helper = null
 }) => {
   const nbPages = parseInt(store.totalItems)
@@ -38,8 +38,8 @@ const BStrapListView = ({
   function onSelectionChange (selection) {
     if (shiftDown.get() && store.selection && store.selection.length > 0) {
       if (store.selection.length > 0) {
-        let first = store.selection[0]
-        let newSelection = []
+        const first = store.selection[0]
+        const newSelection = []
 
         if (selection < first) {
           for (let i = selection; i <= first; i++) {
@@ -113,11 +113,14 @@ const BStrapListView = ({
           {(batchActions || stableBatchActions) &&
             <ButtonGroup style={{ verticalAlign: 'top ', marginRight: '0.3em' }} className='btn-group-top-right'>
               {batchActions && (
-                <DatagridActions 
-                  state={store} 
-                  actions={batchActions} 
+                <DatagridActions
+                  state={store}
+                  actions={batchActions}
                   overlay={child =>
-                    <OverlayTrigger placement='bottom' overlay={<Tooltip>{'Actions '}</Tooltip>}>{child}</OverlayTrigger>}
+                    <OverlayTrigger placement='top' overlay={<Tooltip>{store.selection && store.selection.length
+                      ? 'List of batch actions or delete action'
+                      : 'To use actions, select the items using the checkboxes'
+                    }</Tooltip>}>{child}</OverlayTrigger>}
                 />)}
               {stableBatchActions && stableBatchActions()}
             </ButtonGroup>
@@ -144,12 +147,12 @@ const BStrapListView = ({
           {(onAddClicked || onAddClickedFL) &&
             <ButtonGroup style={{ verticalAlign: 'top', marginRight: '0.3em' }} className='btn-group-top-right'>
               {onAddClicked &&
-                <OverlayTrigger placement='bottom' overlay={<Tooltip>{'Add new item'}</Tooltip>}>
+                <OverlayTrigger placement='top' overlay={<Tooltip>{'Add new item'}</Tooltip>}>
                   <Button bsStyle='primary' onClick={() => onAddClicked(store)}>{store.addText || '+'}</Button>
                 </OverlayTrigger>
               }
               {onAddClicked && onAddClicked2 && (
-                <OverlayTrigger placement='bottom' overlay={<Tooltip>{onAddClicked2Tip}</Tooltip>}>
+                <OverlayTrigger placement='top' overlay={onAddClicked2tip && <Tooltip>{onAddClicked2tip}</Tooltip>}>
                   <Button bsStyle='primary' onClick={() => onAddClicked2(store)}>
                     {(store.addText && store.addText[0]) || '+'} {onAddClicked2text || ''}
                   </Button>

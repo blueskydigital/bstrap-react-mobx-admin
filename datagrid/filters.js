@@ -14,7 +14,7 @@ class Dropdown extends FilterBases.DropdownBase {
 
   renderMenu (state, filters) {
     return (
-      <OverlayTrigger placement='bottom' overlay={<Tooltip>{'List of availible filters to be selected'}</Tooltip>}>
+      <OverlayTrigger placement='top' overlay={<Tooltip>{'List of availible filters to be selected'}</Tooltip>}>
         <DropdownButton title="filters" pullRight id="bg-nested-dropdown">
           {this.createItems(state, filters)}
         </DropdownButton>
@@ -82,7 +82,7 @@ const Apply = observer(({ apply, label, state }) => {
     }
   })
   return show && (
-    <OverlayTrigger placement='bottom' overlay={<Tooltip>{'Apply selected filters'}</Tooltip>}>
+    <OverlayTrigger placement='top' overlay={<Tooltip>{'Apply selected filters'}</Tooltip>}>
       <Button onClick={apply}>{label}</Button>
     </OverlayTrigger>)
 })
