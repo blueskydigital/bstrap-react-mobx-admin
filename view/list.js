@@ -65,6 +65,7 @@ const BStrapListView = ({
     } else {
       // we have receive index of selected item
       // so toggle the selection of da index
+      store.selectionAll = false
       store.toggleIndex(selection)
     }
   }
@@ -73,7 +74,7 @@ const BStrapListView = ({
     return store.selection.indexOf(idx) >= 0
   }
 
-  const allSelected = store.selection.length > 0 && store.selection.length === store.items.length
+  const allSelected = store.selectionAll || (store.selection.length > 0 && store.selection.length === store.items.length)
 
   const filtersRender = (filters && store.state === 'ready') ? (
     <Filters.Controls state={store}

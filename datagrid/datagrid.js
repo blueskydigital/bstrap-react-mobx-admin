@@ -2,8 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { observer } from 'mobx-react'
 import { Checkbox, Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
-import { buildHeaders, buildCells } from 'react-mobx-admin/components/common/datagrid/table'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
+import { buildHeaders, buildCells } from 'react-mobx-admin/components/common/datagrid/table'
 
 const BStrapHeader = ({ state, label, sort, name, onSort }) => {
   function _onUpClick (e) {
@@ -88,10 +88,10 @@ const BStrapDatagrid = ({
         state.filters.delete(key)
       })
       const newQPars = Object.assign({}, state._convertFilters(state.filters), {
-        '_page': state.router.queryParams['_page'],
-        '_perPage': state.router.queryParams['_perPage'],
-        '_sortField': state.router.queryParams['_sortField'],
-        '_sortDir': state.router.queryParams['_sortDir']
+        _page: state.router.queryParams._page,
+        _perPage: state.router.queryParams._perPage,
+        _sortField: state.router.queryParams._sortField,
+        _sortDir: state.router.queryParams._sortDir
       })
       state.updateQPars(newQPars)
     }
@@ -145,7 +145,7 @@ const BStrapDatagrid = ({
       ? tableChildren = <tr><td>EMPTY</td></tr>
       : state.items.map((r, i) => {
         const selected = selectable && isSelected(i)
-        const timeRestricted = (state.store && state.store.timeRestriction && state.store.timeRestriction.checkRow(state.store, r, state)) || undefined
+        const timeRestricted = (state.store && state.store.timeRestriction && state.store.timeRestriction.checkRow(state.store, r, state)) || undefined
         return (
           <tr selected={selected} key={i} className={customRowStyleClass ? customRowStyleClass(r) : 'noClass'}>
             {

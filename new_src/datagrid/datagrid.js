@@ -2,9 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { observer } from 'mobx-react'
 import { Checkbox, Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
-import {buildTableHeaders} from 'react-mobx-admin/new_src/component_utils'
+import { buildTableHeaders } from 'react-mobx-admin/new_src/component_utils'
 
-const BStrapHeader = ({state, children, sort, name, onSort}) => {
+const BStrapHeader = ({ state, children, sort, name, onSort }) => {
   //
   function _onUpClick (e) {
     onSort(name, sort === 'ASC' ? null : 'ASC')
@@ -49,10 +49,10 @@ const BStrapDatagrid = ({
   onRowSelection, onSort, sortstate, listActions, listActionLeft, allSelected,
   filters, TDComponent, TRComponent, TBodyComponent, refFn, options = {}
 }) => {
-  const _renderTD = ({...rest}) => TDComponent ? (
+  const _renderTD = ({ ...rest }) => TDComponent ? (
     <TDComponent {...rest} /> // custom
   ) : (
-    <td {...rest} />  // or default
+    <td {...rest} /> // or default
   )
   function _renderHeader (name, label, sort, onSort) {
     return (
@@ -68,7 +68,7 @@ const BStrapDatagrid = ({
 
   function _renderCell (attr, row, rowId) {
     const content = fieldCreator(attr, row)
-    return _renderTD({key: `td_${rowId}_${attr}`, children: content})
+    return _renderTD({ key: `td_${rowId}_${attr}`, children: content })
   }
 
   function _onSelectAll (e) {
@@ -81,10 +81,10 @@ const BStrapDatagrid = ({
         state.filters.delete(key)
       })
       const newQPars = Object.assign({}, state._convertFilters(state.filters), {
-        '_page': state.router.queryParams['_page'],
-        '_perPage': state.router.queryParams['_perPage'],
-        '_sortField': state.router.queryParams['_sortField'],
-        '_sortDir': state.router.queryParams['_sortDir']
+        _page: state.router.queryParams._page,
+        _perPage: state.router.queryParams._perPage,
+        _sortField: state.router.queryParams._sortField,
+        _sortDir: state.router.queryParams._sortDir
       })
       state.updateQPars(newQPars)
     }
@@ -113,7 +113,7 @@ const BStrapDatagrid = ({
 
   const selectable = onRowSelection !== undefined && isSelected !== undefined
 
-  let tableChildren = state.state === 'loading' ? (
+  const tableChildren = state.state === 'loading' ? (
     <tr><td>{
       options.loadingComponent ? options.loadingComponent() : (
         <div>
@@ -126,18 +126,22 @@ const BStrapDatagrid = ({
     <tr><td>{options.emptyComponent ? options.emptyComponent() : null}</td></tr>
   ) : state.items.map((row, rowIdx) => {
     const selected = selectable && isSelected(rowIdx)
+    const timeRestricted = (state.store && state.store.timeRestriction && state.store.timeRestriction.checkRow(state.store, row, state)) || undefined
     let cells = []
     selectable && cells.push(_renderTD({
       key: 'chbox',
       children: (
         <div ref={(node) => refFn && refFn(node, row)}>
-          <Checkbox checked={selected} inline onChange={() => onRowSelection(rowIdx)} />
+          { timeRestricted && timeRestricted > 0 // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
+            ? null
+            : <Checkbox checked={selected} inline onChange={() => onRowSelection(rowIdx)} />
+          }
         </div>
       )
     }))
-    listActionLeft && cells.push(_renderTD({key: 'lst-acts-l', children: listActionLeft(row)}))
+    listActionLeft && cells.push(_renderTD({ key: 'lst-acts-l', children: listActionLeft(row) }))
     cells = cells.concat(attrs.map((attr, idx) => _renderCell(attr, row, idx)))
-    listActions && cells.push(_renderTD({key: 'lst-acts', children: listActions(row)}))
+    listActions && cells.push(_renderTD({ key: 'lst-acts', children: listActions(row) }))
 
     return TRComponent ? (
       <TRComponent selected={selected} key={rowIdx} row={row}>{cells}</TRComponent>
