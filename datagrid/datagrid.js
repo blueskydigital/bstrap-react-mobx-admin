@@ -150,7 +150,7 @@ const BStrapDatagrid = ({
           <tr selected={selected} key={i} className={customRowStyleClass ? customRowStyleClass(r) : 'noClass'}>
             {
               selectable && (
-                <td key='chbox' ref={(node) => refFn && refFn(node, r)}>
+                <td key='chbox' ref={i > 0 ? (node) => refFn && refFn(node, r) : undefined}>
                   { timeRestricted && timeRestricted > 0 // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
                     ? null
                     : <Checkbox checked={selected} inline onChange={() => onRowSelection(i)} />
