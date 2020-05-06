@@ -145,12 +145,17 @@ const BStrapDatagrid = ({
       ? tableChildren = <tr><td>EMPTY</td></tr>
       : state.items.map((r, i) => {
         const selected = selectable && isSelected(i)
+        const isScrollTo = state.store && state.store.cv && state.store.cv.scrollTo && r.id && state.store.cv.scrollTo
         const timeRestricted = (state.store && state.store.timeRestriction && state.store.timeRestriction.checkRow(state.store, r, state)) || undefined
+
         return (
-          <tr selected={selected} key={i} className={customRowStyleClass ? customRowStyleClass(r) : 'noClass'}>
+          <tr selected={selected} key={i} className={customRowStyleClass
+            ? customRowStyleClass(r)
+            : 'noClass' + (isScrollTo && r.id && isScrollTo === r.id ? ' show-scrollto' : '')
+          }>
             {
               selectable && (
-                <td key='chbox' ref={i > 0 ? (node) => refFn && refFn(node, r) : undefined}>
+                <td key='chbox'ref={i > 0 ? (node) => refFn && refFn(node, r) : undefined}>
                   { timeRestricted && timeRestricted > 0 // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
                     ? null
                     : <Checkbox checked={selected} inline onChange={() => onRowSelection(i)} />
