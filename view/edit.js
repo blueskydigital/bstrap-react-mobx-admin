@@ -1,5 +1,5 @@
 import React from 'react'
-import {observer} from 'mobx-react'
+import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 import ManipStore from 'react-mobx-admin/state/data_manip'
 
@@ -12,20 +12,17 @@ const _SubmitButton = ({ errors, onSubmit, hasChanged, children, ...rest }) => {
 }
 const SubmitButton = observer(_SubmitButton)
 
-const GlobalErrors = observer(({errors}) => {
-  return errors.has('_global') ? (
-    <ul>
-    {
-      errors.get('_global').map((e, idx) => (
-        <li key={idx} style={{color: 'red'}}>{e}</li>)
-      )
-    }
-    </ul>
-  ) : null
+const GlobalErrors = observer(({ errors }) => {
+  return errors.has('_global')
+    ? errors.get('_global').map(e => {
+      return (Array.isArray(e) ? e : [e]).map((v, k) => (
+        <div key={k} className='alert alert-danger'><strong>Error! </strong>{v} </div>
+      ))
+    })
+    : null
 })
 
 @observer class EditView extends React.Component {
-
   static propTypes = {
     store: PropTypes.instanceOf(ManipStore).isRequired,
     onSave: PropTypes.func,
@@ -74,31 +71,30 @@ const GlobalErrors = observer(({errors}) => {
     e.onKeyDownActions && e.preventDefault() && e.stopPropagation()
   }
 
-  render({store, onSave, onReturn2list, children, buttonOnTop, options = {}, showButtons = true} = this.props) {
-
+  render ({ store, onSave, onReturn2list, children, buttonOnTop, options = {}, showButtons = true } = this.props) {
     const loading = store.state === 'loading' || store.state === 'saving'
     onSave = onSave || store.save.bind(store)
     buttonOnTop = buttonOnTop !== undefined ? buttonOnTop : true
 
-    if(loading) {
+    if (loading) {
       return <span className='is-loading'>loading</span>
     }
 
-    const title = store.origRecordId ?
-      (store.edittitle || 'edit item') :
-      (store.createtitle || 'create new item')
+    const title = store.origRecordId
+      ? (store.edittitle || 'edit item')
+      : (store.createtitle || 'create new item')
     const saveText = store.saveText || 'SAVE'
     const cancelText = store.cancelText || 'cancel'
-    const hasChanged = ()=>(store.isEntityChanged)
+    const hasChanged = () => (store.isEntityChanged)
 
     const actionButtons = (showCustomActionButtons = true) => ([
-      (<div className='btn-group buttons-vertical-align' role='group'>
+      (<div className='btn-group buttons-vertical-align' role='group' key={1}>
         <SubmitButton onSubmit={onSave} errors={store.errors} hasChanged={hasChanged}>
-        <span className='glyphicon glyphicon-saved' />&nbsp; {saveText}
+          <span className='glyphicon glyphicon-saved' />&nbsp; {saveText}
         </SubmitButton>
         {
           onReturn2list ? (
-            <SubmitButton onSubmit={()=>onSave().then(()=>onReturn2list())}
+            <SubmitButton onSubmit={() => onSave().then(() => onReturn2list())}
               errors={store.errors} hasChanged={hasChanged}>
               <span className='glyphicon glyphicon-save' />&nbsp; {store.saveAndReturnText || 'SAVE and return'}
             </SubmitButton>
@@ -112,10 +108,10 @@ const GlobalErrors = observer(({errors}) => {
           ) : null
         }
       </div>
-      ),(
-      <div className='buttons-vertical-align'>
-        {options.customActionButtons && showCustomActionButtons ? options.customActionButtons : null}
-      </div>
+      ), (
+        <div className='buttons-vertical-align' key={2}>
+          {options.customActionButtons && showCustomActionButtons ? options.customActionButtons : null}
+        </div>
       )]
     )
 
@@ -123,15 +119,15 @@ const GlobalErrors = observer(({errors}) => {
       <div className='card'>
         <div className='card-block'>
           <h4 className='card-title'>
-              {title}
-              <span className='right-float'>ID: {store.record.has('id') ? store.record.get('id') : <em>new</em>}</span>    
+            {title}
+            <span className='right-float'>ID: {store.record.has('id') ? store.record.get('id') : <em>new</em>}</span>
           </h4>
           {buttonOnTop && showButtons ? actionButtons() : null}
         </div>
 
         <div className='card-block'>
           <form>{children}</form>
-          <GlobalErrors errors={store.errors} />
+          <GlobalErrors errors={store.errors} /><br />
         </div>
 
         <div className='card-block'>
@@ -142,4 +138,4 @@ const GlobalErrors = observer(({errors}) => {
   }
 }
 export default EditView
-export {SubmitButton, GlobalErrors, EditView}
+export { SubmitButton, GlobalErrors, EditView }
