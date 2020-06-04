@@ -137,8 +137,9 @@ const BStrapDatagrid = ({
     </tbody>
     )
   })
-
+  const disableStorage = []
   let tableChildren
+
   tableChildren = state.state === 'loading'
     ? <tr><td><span className='glyphicon glyphicon-refresh glyphicon-refresh-animate' /> Loading...</td></tr>
     : state.items.length === 0
@@ -148,6 +149,12 @@ const BStrapDatagrid = ({
         const isScrollTo = state.store && state.store.cv && state.store.cv.scrollTo && r.id && state.store.cv.scrollTo
         const timeRestricted = (state.store && state.store.timeRestriction && state.store.timeRestriction.checkRow(state.store, r, state)) || undefined
 
+        let disableAttrs = null
+        if (r.id && state.store && state.store.cv && state.store.cv.disableAttrs) {
+          disableAttrs = disableStorage.includes(r.id) ? state.store.cv.disableAttrs : null
+          disableStorage.push(r.id)
+        }
+
         return (
           <tr selected={selected} key={i} className={customRowStyleClass
             ? customRowStyleClass(r)
@@ -156,7 +163,7 @@ const BStrapDatagrid = ({
             {
               selectable && (
                 <td key='chbox'ref={i > 0 ? (node) => refFn && refFn(node, r) : undefined}>
-                  { timeRestricted && timeRestricted > 0 // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
+                  { disableAttrs !== null || (timeRestricted && timeRestricted > 0) // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
                     ? null
                     : <Checkbox checked={selected} inline onChange={() => onRowSelection(i)} />
                   }
@@ -164,7 +171,7 @@ const BStrapDatagrid = ({
               )
             }
             {
-              buildCells(attrs, fields, r, rowId, _renderCell, _renderRowActions, _renderRowActionDelete)
+              buildCells(attrs, fields, r, rowId, _renderCell, _renderRowActions, _renderRowActionDelete, disableAttrs)
             }
           </tr>
         )
