@@ -145,7 +145,7 @@ const BStrapListView = ({
             store.store.historicDataFilter
           }
           <ButtonGroup style={{ verticalAlign: 'top ', marginRight: '0.3em' }} className='btn-group-top-right'>
-            <Filters.Apply state={store} label={'apply filters'} apply={store.applyFilters.bind(store)} />
+            <Filters.Apply state={store} label={'Apply filters'} apply={store.applyFilters.bind(store)} />
             {filters && (
               <Filters.Dropdown state={store} title='addfilter' filters={filters}
                 showFilter={store.showFilter.bind(store)} />

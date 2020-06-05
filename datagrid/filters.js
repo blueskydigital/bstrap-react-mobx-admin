@@ -83,7 +83,7 @@ const Apply = observer(({ apply, label, state }) => {
   })
   return show && (
     <OverlayTrigger placement='top' overlay={<Tooltip>{'Apply selected filters'}</Tooltip>}>
-      <Button onClick={apply}>{label}</Button>
+      <Button onClick={apply} bsStyle='success'><i className='glyphicon glyphicon-filter' />&nbsp;{label}</Button>
     </OverlayTrigger>)
 })
 
