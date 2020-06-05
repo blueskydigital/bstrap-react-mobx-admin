@@ -60,9 +60,9 @@ const BStrapDatagrid = ({
     )
   }
 
-  function _renderCell (row, name, creatorFn, rowId) {
+  function _renderCell (row, name, creatorFn, rowId, disable = undefined) {
     return (
-      <td key={`td_${rowId}_${name}`}>{creatorFn(name, row)}</td>
+      <td key={`td_${rowId}_${name}`}>{creatorFn(name, row, disable)}</td>
     )
   }
 
@@ -137,7 +137,7 @@ const BStrapDatagrid = ({
     </tbody>
     )
   })
-  const disableStorage = []
+  let latestItem
   let tableChildren
 
   tableChildren = state.state === 'loading'
@@ -148,12 +148,8 @@ const BStrapDatagrid = ({
         const selected = selectable && isSelected(i)
         const isScrollTo = state.store && state.store.cv && state.store.cv.scrollTo && r.id && state.store.cv.scrollTo
         const timeRestricted = (state.store && state.store.timeRestriction && state.store.timeRestriction.checkRow(state.store, r, state)) || undefined
-
-        let disableAttrs = null
-        if (r.id && state.store && state.store.cv && state.store.cv.disableAttrs) {
-          disableAttrs = disableStorage.includes(r.id) ? state.store.cv.disableAttrs : null
-          disableStorage.push(r.id)
-        }
+        const disableAttrs = (r.id && latestItem && latestItem === r.id && state.store && state.store.cv && state.store.cv.disableAttrs) || undefined
+        latestItem = r.id
 
         return (
           <tr selected={selected} key={i} className={customRowStyleClass
@@ -163,7 +159,7 @@ const BStrapDatagrid = ({
             {
               selectable && (
                 <td key='chbox'ref={i > 0 ? (node) => refFn && refFn(node, r) : undefined}>
-                  { disableAttrs !== null || (timeRestricted && timeRestricted > 0) // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
+                  { disableAttrs || (timeRestricted && timeRestricted > 0) // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
                     ? null
                     : <Checkbox checked={selected} inline onChange={() => onRowSelection(i)} />
                   }
