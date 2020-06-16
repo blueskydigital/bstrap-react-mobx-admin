@@ -107,9 +107,10 @@ const BStrapListView = ({
 
   const filterRow = filters ? Filters.FilterRow(filters, store) : null
   const refFn = (node, row) => {
-    if (row.id === store.scrollTo) {
+    if (row.id && store.scrollTo && row.id === store.scrollTo) {
       node && node.scrollIntoView(true)
       window.scrollBy(0, -100)
+      delete store.scrollTo
     }
   }
 

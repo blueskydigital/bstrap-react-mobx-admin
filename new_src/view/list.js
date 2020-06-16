@@ -20,7 +20,7 @@ const BStrapListView = ({
   headerCreator = headerCreator || store.headerCreator.bind(store)
   const perPageTitle = store.router.queryParams._perPage || ''
 
-  let shiftDown = observable.box(false)
+  const shiftDown = observable.box(false)
 
   window.addEventListener('keydown', e => {
     if (e.keyCode === 16) {
@@ -33,8 +33,8 @@ const BStrapListView = ({
   function onSelectionChange (selection) {
     if (shiftDown.get() && store.selection && store.selection.length > 0) {
       if (store.selection.length > 0) {
-        let first = store.selection[0]
-        let newSelection = []
+        const first = store.selection[0]
+        const newSelection = []
 
         if (selection < first) {
           for (let i = selection; i <= first; i++) {
@@ -96,11 +96,13 @@ const BStrapListView = ({
       </div>
     </div>
   )
+
   const filterRow = tableFilters ? Filters.FilterRow(tableFilters, store) : null
   const title = options.title ? options.title() : null
   const refFn = (node, row) => {
-    if (row.id === store.scrollTo) {
+    if (row.id && store.scrollTo && row.id === store.scrollTo) {
       node && node.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+      delete store.scrollTo
     }
   }
 
