@@ -89,9 +89,9 @@ const GlobalErrors = observer(({ errors }) => {
 
     const actionButtons = (showCustomActionButtons = true) => ([
       (<div className='btn-group buttons-vertical-align' role='group' key={1}>
-        <SubmitButton onSubmit={onSave} errors={store.errors} hasChanged={hasChanged}>
+        {!store.hideSubmitOnly && <SubmitButton onSubmit={onSave} errors={store.errors} hasChanged={hasChanged}>
           <span className='glyphicon glyphicon-saved' />&nbsp; {saveText}
-        </SubmitButton>
+        </SubmitButton>}
         {
           onReturn2list ? (
             <SubmitButton onSubmit={() => onSave().then(() => onReturn2list())}

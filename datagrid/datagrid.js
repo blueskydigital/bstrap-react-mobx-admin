@@ -118,6 +118,7 @@ const BStrapDatagrid = ({
       state.store.setEntityLastState(state.store.cv.entityname, state.store.router.queryParams)
   }
 
+  const noDelete = state && state.noDelete
   const selectable = onRowSelection !== undefined && isSelected !== undefined
   const SortableItem = SortableElement(({ row, children }) =>
     <tr className={customRowStyleClass ? customRowStyleClass(row) : 'noClass'} >{children}</tr>)
@@ -159,7 +160,7 @@ const BStrapDatagrid = ({
             {
               selectable && (
                 <td key='chbox'ref={i > 0 ? (node) => refFn && refFn(node, r) : undefined}>
-                  { disableAttrs || (timeRestricted && timeRestricted > 0) // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
+                  { noDelete || disableAttrs || (timeRestricted && timeRestricted > 0) // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
                     ? null
                     : <Checkbox checked={selected} inline onChange={() => onRowSelection(i)} />
                   }
@@ -204,9 +205,9 @@ const BStrapDatagrid = ({
             filters && (
               <tr className='filter-row'>
                 {
-                  selectable ? <th key='chbox'>
+                  selectable && !noDelete ? <th key='chbox'>
                     <Checkbox checked={allSelected} inline bsClass='btn' onChange={_onSelectAll} />
-                  </th> : null
+                  </th> : <th/>
                 }
                 {
                   filters.map((i, idx) => <th key={idx}>{i}</th>)

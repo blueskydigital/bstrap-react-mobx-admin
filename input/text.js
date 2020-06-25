@@ -3,16 +3,16 @@ import PropTypes from 'prop-types'
 import { observer } from 'mobx-react'
 import { FormGroup, ControlLabel, FormControl, HelpBlock, Checkbox } from 'react-bootstrap'
 
-const TextInput = ({attr, record, label, onChange, onHeaderCheckedChange, errors, validationSuccess, dateFormat, attrValue, ...rest}) => {
+const TextInput = ({ attr, record, label, onChange, onHeaderCheckedChange, errors, validationSuccess, dateFormat, attrValue, ...rest }) => {
   function handleChange (event) {
     onChange(attr, event.target.value)
   }
 
   function formateDate ({ date = new Date(), separator = '-', order = ['year', 'month', 'day'] }) {
-    let obj = {
-      'year': date.getUTCFullYear(),
-      'month': (date.getUTCMonth() + 1 < 10) ? ('0' + (date.getUTCMonth() + 1)) : (date.getUTCMonth() + 1),
-      'day': (date.getUTCDate() < 10) ? ('0' + date.getUTCDate()) : date.getUTCDate()
+    const obj = {
+      year: date.getUTCFullYear(),
+      month: (date.getUTCMonth() + 1 < 10) ? ('0' + (date.getUTCMonth() + 1)) : (date.getUTCMonth() + 1),
+      day: (date.getUTCDate() < 10) ? ('0' + date.getUTCDate()) : date.getUTCDate()
     }
     return `${obj[order[0]]}${separator}${obj[order[1]]}${separator}${obj[order[2]]}`
   }
@@ -26,7 +26,7 @@ const TextInput = ({attr, record, label, onChange, onHeaderCheckedChange, errors
     if ((Object.prototype.toString.call(date) !== '[object Date]') || isNaN(date.getTime())) {
       // console.log('Invalid date format!')
     } else {
-      value = formateDate({date})
+      value = formateDate({ date })
     }
   }
 
@@ -34,14 +34,14 @@ const TextInput = ({attr, record, label, onChange, onHeaderCheckedChange, errors
     <FormGroup controlId={attr} validationState={validationState}>
       <ControlLabel>
         {label}
-        { onHeaderCheckedChange && Array.isArray(onHeaderCheckedChange) && 
+        { onHeaderCheckedChange && Array.isArray(onHeaderCheckedChange) &&
           onHeaderCheckedChange[0] && onHeaderCheckedChange[1]
           ? <Checkbox
-                inline
-                style={{ marginLeft: '5px' }}
-                onChange={e => onHeaderCheckedChange[1](attr, e.target.checked)} >
-              {onHeaderCheckedChange[0]}
-            </Checkbox>
+            inline
+            style={{ marginLeft: '5px' }}
+            onChange={e => onHeaderCheckedChange[1](attr, e.target.checked)} >
+            {onHeaderCheckedChange[0]}
+          </Checkbox>
           : null
         }
       </ControlLabel>
