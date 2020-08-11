@@ -45,7 +45,7 @@ BStrapHeader.propTypes = {
 const BStrapDatagrid = ({
   state, attrs, fields, titles, rowId, isSelected, noSort,
   onRowSelection, onSort, sortstate, listActions, listActionDelete, allSelected,
-  filters, dragbleListEntity, customRowStyleClass, dragbleHelperClass, refFn
+  filters, dragbleListEntity, customRowStyleClass, dragbleHelperClass, refFn, batchMenuControl
 }) => {
   const listActionsRender = listActions && (<th key={'_actions'}>{listActions()}</th>)
   const listActionDeleteRender = listActionDelete && (<th key={'_actions-delete'}>{listActionDelete()}</th>)
@@ -160,7 +160,7 @@ const BStrapDatagrid = ({
             {
               selectable && (
                 <td key='chbox'ref={i > 0 ? (node) => refFn && refFn(node, r) : undefined}>
-                  { noDelete || disableAttrs || (timeRestricted && timeRestricted > 0) // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
+                  { noDelete || disableAttrs || (!batchMenuControl && timeRestricted && timeRestricted > 0) // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
                     ? null
                     : <Checkbox checked={selected} inline onChange={() => onRowSelection(i)} />
                   }
