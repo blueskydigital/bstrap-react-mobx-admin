@@ -19,7 +19,7 @@ import {
 
 const BStrapListView = ({
   store, onAddClicked, onAddClicked2, onAddClicked2text, onAddClicked2tip, onAddClickedFL, fields, filters, listActions, batchActions, renderOuter,
-  perPageOptions, stableBatchActions, selectable = true, helper = null
+  perPageOptions, stableBatchActions, selectable = true, helper = null, batchMenuControl = false
 }) => {
   const nbPages = parseInt(store.totalItems)
   const perPageTitle = store.router.queryParams._perPage || ''
@@ -197,7 +197,9 @@ const BStrapListView = ({
           isSelected={isSelected}
           allSelected={allSelected}
           filters={filterRow}
-          refFn={refFn} />
+          refFn={refFn}
+          batchMenuControl={batchMenuControl}
+        />
       </div>
       { pagination }
     </div>
