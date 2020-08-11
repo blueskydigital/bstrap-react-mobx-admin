@@ -59,7 +59,7 @@ const BStrapListView = ({
     }
 
     if (selection === 'all') {
-      store.selectAll()
+      store.selectAll(batchMenuControl)
     } else if (selection.length === 0) {
       store.updateSelection([])
     } else {
