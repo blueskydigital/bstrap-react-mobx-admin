@@ -71,9 +71,9 @@ const GlobalErrors = observer(({ errors }) => {
     e.onKeyDownActions && e.preventDefault() && e.stopPropagation()
   }
 
-  render ({ store, onSave, onReturn2list, children, buttonOnTop, options = {}, showButtons = true } = this.props) {
+  render ({ store, onSave, onSaveUpload, onReturn2list, children, buttonOnTop, options = {}, showButtons = true } = this.props) {
     const loading = store.state === 'loading' || store.state === 'saving'
-    onSave = onSave || store.save.bind(store)
+    onSave = (onSaveUpload && store.record && !store.record.has('id') ? onSaveUpload : (onSave || store.save.bind(store)))
     buttonOnTop = buttonOnTop !== undefined ? buttonOnTop : true
 
     if (loading) {
@@ -94,7 +94,7 @@ const GlobalErrors = observer(({ errors }) => {
         </SubmitButton>}
         {
           onReturn2list ? (
-            <SubmitButton onSubmit={() => onSave().then(() => onReturn2list())}
+            <SubmitButton onSubmit={() => onSaveUpload ? onSave(store).then(() => onReturn2list()) : onSave().then(() => onReturn2list())}
               errors={store.errors} hasChanged={hasChanged}>
               <span className='glyphicon glyphicon-save' />&nbsp; {store.saveAndReturnText || 'SAVE and return'}
             </SubmitButton>
