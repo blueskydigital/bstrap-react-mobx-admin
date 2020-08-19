@@ -118,6 +118,13 @@ const BStrapListView = ({
     <div className='card'>
       <div className='card-block'>
         <div className='pull-right'>
+          <ButtonGroup style={{ verticalAlign: 'top ', marginRight: '0.6em' }} className='btn-group-top-right'>
+            <Filters.Apply state={store} label={'Apply filters'} apply={store.applyFilters.bind(store)} />
+            {filters && (
+              <Filters.Dropdown state={store} title='addfilter' filters={filters}
+                showFilter={store.showFilter.bind(store)} />
+            )}
+          </ButtonGroup>
           {(batchActions || stableBatchActions) &&
             <ButtonGroup style={{ verticalAlign: 'top ', marginRight: '0.3em' }} className='btn-group-top-right'>
               {batchActions && (
@@ -145,18 +152,11 @@ const BStrapListView = ({
             store.store.historicDataFilterEnable(store.attrs) &&
             store.store.historicDataFilter
           }
-          <ButtonGroup style={{ verticalAlign: 'top ', marginRight: '0.3em' }} className='btn-group-top-right'>
-            <Filters.Apply state={store} label={'Apply filters'} apply={store.applyFilters.bind(store)} />
-            {filters && (
-              <Filters.Dropdown state={store} title='addfilter' filters={filters}
-                showFilter={store.showFilter.bind(store)} />
-            )}
-          </ButtonGroup>
           {(onAddClicked || onAddClickedFL) &&
-            <ButtonGroup style={{ verticalAlign: 'top', marginRight: '0.3em' }} className='btn-group-top-right'>
+            <ButtonGroup style={{ verticalAlign: 'top', marginRight: '0.1em', marginLeft: '1em' }} className='btn-group-top-right'>
               {onAddClicked &&
                 <OverlayTrigger placement='top' overlay={<Tooltip>{'Add new item'}</Tooltip>}>
-                  <Button bsStyle='primary' onClick={() => onAddClicked(store)}>{store.addText || '+'}</Button>
+                  <Button bsStyle='primary' style={{ textTransform: 'uppercase' }} onClick={() => onAddClicked(store)}>{store.addText || '+'}</Button>
                 </OverlayTrigger>
               }
               {onAddClicked && onAddClicked2 && (
