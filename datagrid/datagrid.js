@@ -207,7 +207,7 @@ const BStrapDatagrid = ({
                 {
                   selectable && !noDelete ? <th key='chbox'>
                     <Checkbox checked={allSelected} inline bsClass='btn' onChange={_onSelectAll} />
-                  </th> : <th/>
+                  </th> : (!selectable ? '' : <th/>)
                 }
                 {
                   filters.map((i, idx) => <th key={idx}>{i}</th>)

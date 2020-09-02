@@ -9,6 +9,7 @@ import Filters from '../datagrid/filters'
 import ListStore from 'react-mobx-admin/state/data_table'
 import Pagination from '../datagrid/pagination'
 import {
+  Badge,
   Button,
   ButtonGroup,
   DropdownButton,
@@ -113,6 +114,12 @@ const BStrapListView = ({
       delete store.scrollTo
     }
   }
+  const selectedItems = store.selection && store.selection.length > 0 && (
+    <Button bsStyle='defult'>
+      <Badge variant="secondary">
+        <i className='glyphicon glyphicon-check'></i> {store.selection.length}
+      </Badge>
+    </Button>)
 
   const result = (
     <div className='card'>
@@ -133,11 +140,12 @@ const BStrapListView = ({
                   actions={batchActions}
                   overlay={child =>
                     <OverlayTrigger placement='top' overlay={<Tooltip>{store.selection && store.selection.length
-                      ? 'List of batch actions or delete action'
+                      ? 'List of batch actions or deletions'
                       : 'To use actions, select the items using the checkboxes'
                     }</Tooltip>}>{child}</OverlayTrigger>}
                 />)}
               {stableBatchActions && stableBatchActions()}
+              {selectedItems}
             </ButtonGroup>
           }
           { typeof store.store.regionFilterEnable !== 'undefined' &&
