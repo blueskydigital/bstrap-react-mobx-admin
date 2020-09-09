@@ -73,8 +73,8 @@ const BStrapListView = ({
     <Filters.Controls filters={filters} store={store} />
   ) : null
 
-  const perPageRender = (
-    <DropdownButton className='per-page-select' title={perPageTitle} dropup
+  const perPageRender = (position = 'bottom') => (
+    <DropdownButton className='per-page-select' title={perPageTitle} dropup={position === 'bottom'} dropdown={position === 'top'}
       id='dropdown' onSelect={(num) => store.setPerPage(num)}>
       {
         store.perPageOptions.map((i) => {
@@ -83,13 +83,13 @@ const BStrapListView = ({
       }
     </DropdownButton>
   )
-  const pagination = (
-    <div className='card-block'>
+  const pagination = (position = 'bottom') => (
+    <div className='card-block breadcrumb pagination-group'>
       <div className='pull-right'>
         <ButtonGroup>
           <Pagination.Pagination store={store} onChange={store.updatePage.bind(store)} />
         </ButtonGroup>
-        {perPageRender}
+        {perPageRender(position)}
       </div>
       <div className='pull-left'>
         <div><Pagination.PageInfo info={store} query={store.router.queryParams} /></div>
@@ -137,6 +137,7 @@ const BStrapListView = ({
       <div style={{ clear: 'both' }}>
         { filtersRender }
       </div>
+      { pagination('top') }
       <div className='card-block'>
         <Datagrid state={store} attrs={store.attrs} {...rest}
           headerCreator={headerCreator} fieldCreator={fieldCreator}
@@ -148,7 +149,7 @@ const BStrapListView = ({
           allSelected={allSelected} filters={filterRow}
           options={options} refFn={refFn} />
       </div>
-      { pagination }
+      { pagination('bottom') }
     </div>
   )
 }
