@@ -1,6 +1,8 @@
 import React from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
+import moment from 'moment'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 const _SubmitButton = ({ errors, onSubmit, enabled, children, ...rest }) => {
   return errors ? (
@@ -119,12 +121,26 @@ const GlobalErrors = observer(({ errors }) => {
       )]
     )
 
+    const dateFormat = 'YYYY-MM-DD HH:MM:SS'
+    const createdAt = store.record && (store.record.has('created_at')
+      ? store.record.get('created_at')
+      : store.record.has('createdAt') ? store.record.get('createdAt') : null)
+    const updatedAt = store.record && (store.record.has('updated_at')
+      ? store.record.get('updated_at')
+      : store.record.has('updatedAt') ? store.record.get('updatedAt') : (store.record.has('updated') ? store.record.get('updated') : null))
+    const tooltip = (
+      (createdAt ? 'Created: ' + moment(createdAt).format(dateFormat).concat(' ') : '') +
+      (updatedAt ? 'Updated: ' + moment(updatedAt).format(dateFormat) : '')
+    )
+
     return (
       <div className='card'>
         <div className='card-block'>
           <h4 className='card-title'>
             {title}
-            <span className='right-float'>ID: {store.record.has('id') ? store.record.get('id') : <em>new</em>}</span>
+            <OverlayTrigger placement='left' overlay={tooltip ? <Tooltip>{tooltip}</Tooltip> : <Tooltip>Created/updated: no record</Tooltip>}>
+              <span className='right-float'>ID: {store.record && store.record.has('id') ? store.record.get('id') : <em>new</em>}</span>
+            </OverlayTrigger>
           </h4>
           {buttonsOnTop ? actionButtons() : null}
         </div>
