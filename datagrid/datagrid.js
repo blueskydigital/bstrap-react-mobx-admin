@@ -149,7 +149,7 @@ const BStrapDatagrid = ({
         const selected = selectable && isSelected(i)
         const isScrollTo = state.store && state.store.cv && state.store.cv.scrollTo && r.id && state.store.cv.scrollTo
         const timeRestricted = (state.store && state.store.timeRestriction && state.store.timeRestriction.checkRow(state.store, r, state)) || undefined
-        const disableAttrs = (r.id && latestItem && latestItem === r.id && state.store && state.store.cv && state.store.cv.disableAttrs) || undefined
+        const disableAttrs = (!r.id || (r.id && latestItem && latestItem === r.id && state.store && state.store.cv && state.store.cv.disableAttrs)) || undefined
         latestItem = r.id
 
         return (
