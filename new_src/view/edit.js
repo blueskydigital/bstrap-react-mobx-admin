@@ -139,7 +139,7 @@ const GlobalErrors = observer(({ errors }) => {
           <h4 className='card-title'>
             {title}
             <OverlayTrigger placement='left' overlay={tooltip ? <Tooltip>{tooltip}</Tooltip> : <Tooltip>Created/updated: no record</Tooltip>}>
-              <span className='right-float'>ID: {store.record && store.record.has('id') ? store.record.get('id') : <em>new</em>}</span>
+              <span className='header-id'>#{store.record && store.record.has('id') ? store.record.get('id') : <em>new</em>}</span>
             </OverlayTrigger>
           </h4>
           {buttonsOnTop ? actionButtons() : null}
