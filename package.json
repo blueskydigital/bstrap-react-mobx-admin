@@ -20,7 +20,6 @@
   "license": "ISC",
   "dependencies": {
     "react-addons-test-utils": "^15.3.0",
-    "react-bootstrap": "^0.31.5",
     "react-bootstrap-date-picker": "github:maxaggedon/react-bootstrap-date-picker",
     "react-bootstrap-typeahead": "^2.3.0",
     "react-datepicker": "0.62.0",

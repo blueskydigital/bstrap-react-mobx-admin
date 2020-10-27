@@ -161,21 +161,26 @@ const BStrapListView = ({
             store.store.historicDataFilter
           }
           {(onAddClicked || onAddClickedFL) &&
-            <ButtonGroup style={{ verticalAlign: 'top', marginRight: '0.1em', marginLeft: '1em' }} className='btn-group-top-right'>
-              {onAddClicked &&
-                <OverlayTrigger placement='top' overlay={<Tooltip>{'Add new item'}</Tooltip>}>
-                  <Button bsStyle='primary' style={{ textTransform: 'uppercase' }} onClick={() => onAddClicked(store)}>{store.addText || '+'}</Button>
-                </OverlayTrigger>
-              }
+            <span style={{ verticalAlign: 'top', marginRight: '0.25em' }} className='btn-group-top-right'>
               {onAddClicked && onAddClicked2 && (
                 <OverlayTrigger placement='top' overlay={onAddClicked2tip && <Tooltip>{onAddClicked2tip}</Tooltip>}>
-                  <Button bsStyle='primary' onClick={() => onAddClicked2(store)}>
+                  <Button bsStyle='default' onClick={() => onAddClicked2(store)} style={{ marginLeft: '0.25em' }}>
                     {(store.addText && store.addText[0]) || '+'} {onAddClicked2text || ''}
                   </Button>
                 </OverlayTrigger>)
               }
-              {onAddClickedFL && <Button bsStyle='primary' onClick={() => onAddClickedFL(store)}>{store.addText || '+'} {'from last'}</Button>}
-            </ButtonGroup>
+              {onAddClickedFL && <Button bsStyle='default' onClick={() => onAddClickedFL(store)} style={{ marginLeft: '0.25em' }}>
+                {store.addText || '+'} {'from last'}
+              </Button>}
+
+              {onAddClicked &&
+                <OverlayTrigger placement='top' overlay={<Tooltip>{'Add new item'}</Tooltip>}>
+                  <Button bsStyle='primary' onClick={() => onAddClicked(store)} style={{ textTransform: 'uppercase', marginLeft: '0.25em' }}>
+                    {store.addText || '+'}
+                  </Button>
+                </OverlayTrigger>
+              }
+            </span>
           }
         </div>
         {store.title
