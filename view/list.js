@@ -175,8 +175,8 @@ const BStrapListView = ({
 
               {onAddClicked &&
                 <OverlayTrigger placement='top' overlay={<Tooltip>{'Add new item'}</Tooltip>}>
-                  <Button bsStyle='primary' onClick={() => onAddClicked(store)} style={{ textTransform: 'uppercase', marginLeft: '0.25em' }}>
-                    {store.addText || '+'}
+                  <Button bsStyle='primary' className='new-button' onClick={() => onAddClicked(store)}>
+                    {store.addText || '+ New'}
                   </Button>
                 </OverlayTrigger>
               }
