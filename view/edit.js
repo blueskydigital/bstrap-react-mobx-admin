@@ -18,7 +18,9 @@ const GlobalErrors = observer(({ errors }) => {
   return errors.has('_global')
     ? errors.get('_global').map(e => {
       return (Array.isArray(e) ? e : [e]).map((v, k) => (
-        <div key={k} className='alert alert-danger'><strong>Error! </strong>{v} </div>
+        <div key={k} className='alert alert-danger' style={{ clear: 'both' }}>
+          <strong>Error!</strong>&nbsp;{v}
+        </div>
       ))
     })
     : null
