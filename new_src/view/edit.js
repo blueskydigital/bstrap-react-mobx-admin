@@ -123,7 +123,7 @@ const GlobalErrors = observer(({ errors }) => {
       )]
     )
 
-    const dateFormat = 'YYYY-MM-DD HH:MM:SS'
+    const dateFormat = 'YYYY-MM-DD HH:mm:ss'
     const createdAt = store.record && (store.record.has('created_at')
       ? store.record.get('created_at')
       : store.record.has('createdAt') ? store.record.get('createdAt') : null)
@@ -131,8 +131,8 @@ const GlobalErrors = observer(({ errors }) => {
       ? store.record.get('updated_at')
       : store.record.has('updatedAt') ? store.record.get('updatedAt') : (store.record.has('updated') ? store.record.get('updated') : null))
     const tooltip = (
-      (createdAt ? 'Created: ' + moment(createdAt).format(dateFormat).concat(' ') : '') +
-      (updatedAt ? 'Updated: ' + moment(updatedAt).format(dateFormat) : '')
+      (createdAt ? 'Created: ' + moment(createdAt).utc().format(dateFormat).concat(' ') : '') +
+      (updatedAt ? 'Updated: ' + moment(updatedAt).utc().format(dateFormat) : '')
     )
 
     return (
