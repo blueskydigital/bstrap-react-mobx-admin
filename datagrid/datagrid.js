@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { observer } from 'mobx-react'
+import { observable } from 'mobx'
 import { Checkbox, Button, OverlayTrigger, Tooltip } from 'react-bootstrap'
 import { SortableContainer, SortableElement } from 'react-sortable-hoc'
 import { buildHeaders, buildCells } from 'react-mobx-admin/components/common/datagrid/table'
@@ -13,8 +14,7 @@ const BStrapHeader = ({ state, label, sort, name, onSort }) => {
 
   function _onDownClick (e) {
     onSort(name, sort === 'DESC' ? null : 'DESC')
-
-    state && state.store &&
+    state && state.store &&
     state.store.setEntityLastState(state.store.cv.entityname, state.store.router.queryParams)
   }
 
@@ -43,12 +43,13 @@ BStrapHeader.propTypes = {
 }
 
 const BStrapDatagrid = ({
-  state, attrs, fields, titles, rowId, isSelected, noSort,
+  state, attrs, fields, titles, rowId, isSelected, noSort, newItems,
   onRowSelection, onSort, sortstate, listActions, listActionDelete, allSelected,
   filters, dragbleListEntity, customRowStyleClass, dragbleHelperClass, refFn, batchMenuControl
 }) => {
   const listActionsRender = listActions && (<th key={'_actions'}>{listActions()}</th>)
   const listActionDeleteRender = listActionDelete && (<th key={'_actions-delete'}>{listActionDelete()}</th>)
+  const rowItems = newItems || state.items
 
   function _renderHeader (name, label, sort, onSort) {
     return (
@@ -95,6 +96,9 @@ const BStrapDatagrid = ({
       })
       state.updateQPars(newQPars)
     }
+    if (state.selection) {
+      state.selection = observable.box([])
+    }
 
     if (!sortstate._sortField) {
       if (state.defaultSort && state.defaultSort._sortField && state.defaultSort._sortField.split(',')) {
@@ -111,7 +115,9 @@ const BStrapDatagrid = ({
 
       sortstate._sortField = ''
       sortstate._sortDir = ''
-      delete state.store.entityLastState[state.store.cv.entityname]
+      if (state.store && state.store.entityLastState) {
+        delete state.store.entityLastState[state.store.cv.entityname]
+      }
     }
 
     state && state.store &&
@@ -143,13 +149,14 @@ const BStrapDatagrid = ({
 
   tableChildren = state.state === 'loading'
     ? <tr><td><span className='glyphicon glyphicon-refresh glyphicon-refresh-animate' /> Loading...</td></tr>
-    : state.items.length === 0
+    : rowItems.length === 0
       ? tableChildren = <tr><td>EMPTY</td></tr>
-      : state.items.map((r, i) => {
+      : rowItems.map((r, i) => {
         const selected = selectable && isSelected(i)
         const isScrollTo = state.store && state.store.cv && state.store.cv.scrollTo && r.id && state.store.cv.scrollTo
         const timeRestricted = (state.store && state.store.timeRestriction && state.store.timeRestriction.checkRow(state.store, r, state)) || undefined
-        const disableAttrs = (!r.id || (r.id && latestItem && latestItem === r.id && state.store && state.store.cv && state.store.cv.disableAttrs)) || undefined
+        const disableAttrs = ((r.id === undefined || r.id === null) ||
+          (latestItem && latestItem === r.id && state.store && state.store.cv && state.store.cv.disableAttrs)) || undefined
         latestItem = r.id
 
         return (
@@ -159,7 +166,7 @@ const BStrapDatagrid = ({
           }>
             {
               selectable && (
-                <td key='chbox'ref={i > 0 ? (node) => refFn && refFn(node, r) : undefined}>
+                <td key='chbox'ref={i >= 0 ? (node) => refFn && refFn(node, r) : undefined}>
                   { noDelete || disableAttrs || (!batchMenuControl && timeRestricted && timeRestricted > 0) // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
                     ? null
                     : <Checkbox checked={selected} inline onChange={() => onRowSelection(i)} />
@@ -223,7 +230,7 @@ const BStrapDatagrid = ({
         dragbleListEntity
           ? <SortableWrapper
             helperClass={dragbleHelperClass}
-            items={state.items}
+            items={rowItems}
             buildCells={buildCells}
             onSortEnd={dragbleListEntity.onDragEnd}
             pressDelay={dragbleListEntity.dragToggleDelay} />
