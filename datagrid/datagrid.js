@@ -43,7 +43,7 @@ BStrapHeader.propTypes = {
 }
 
 const BStrapDatagrid = ({
-  state, attrs, fields, titles, rowId, isSelected, noSort, newItems,
+  state, attrs, fields, titles, rowId, isSelected, noSort, newItems, fakeID,
   onRowSelection, onSort, sortstate, listActions, listActionDelete, allSelected,
   filters, dragbleListEntity, customRowStyleClass, dragbleHelperClass, refFn, batchMenuControl
 }) => {
@@ -51,9 +51,9 @@ const BStrapDatagrid = ({
   const listActionDeleteRender = listActionDelete && (<th key={'_actions-delete'}>{listActionDelete()}</th>)
   const rowItems = newItems || state.items
 
-  function _renderHeader (name, label, sort, onSort) {
+  function _renderHeader (name, label, sort, onSort, fakeID = null) {
     return (
-      <th key={`th_${name}`}>
+      <th key={`th_${name}`} style={fakeID && fakeID === name ? { display: 'none' } : {}}>
         <BStrapHeader
           sort={sort} name={name} label={label} state={state}
           onSort={noSort && noSort.some(n => n === name) ? null : onSort} />
@@ -61,9 +61,11 @@ const BStrapDatagrid = ({
     )
   }
 
-  function _renderCell (row, name, creatorFn, rowId, disable = undefined) {
+  function _renderCell (row, name, creatorFn, rowId, disable = null, fakeID = null) {
     return (
-      <td key={`td_${rowId}_${name}`}>{creatorFn(name, row, disable)}</td>
+      <td key={`td_${rowId}_${name}`} style={fakeID && fakeID === name ? { display: 'none' } : {}}>
+        {creatorFn(name, row, disable)}
+      </td>
     )
   }
 
@@ -124,28 +126,26 @@ const BStrapDatagrid = ({
       state.store.setEntityLastState(state.store.cv.entityname, state.store.router.queryParams)
   }
 
+  let latestItem
+  let tableChildren
   const noDelete = state && state.noDelete
   const selectable = onRowSelection !== undefined && isSelected !== undefined
   const SortableItem = SortableElement(({ row, children }) =>
     <tr className={customRowStyleClass ? customRowStyleClass(row) : 'noClass'} >{children}</tr>)
   const SortableWrapper = SortableContainer(({ items, buildCells }) => {
     return (<tbody>
-      {
-        items.map((r, index) => (
-          <SortableItem
-            key={index}
-            row={r}
-            index={dragbleListEntity.editIndex ? dragbleListEntity.editIndex(index) : index}
-            disabled={dragbleListEntity.disableFn(r)}>
-            {buildCells(attrs, fields, r, rowId, _renderCell, _renderRowActions, _renderRowActionDelete)}
-          </SortableItem>
-        ))
-      }
+      {items.map((r, index) => (
+        <SortableItem
+          key={index}
+          row={r}
+          index={dragbleListEntity.editIndex ? dragbleListEntity.editIndex(index) : index}
+          disabled={dragbleListEntity.disableFn(r)}>
+          {buildCells(attrs, fields, r, rowId, _renderCell, _renderRowActions, _renderRowActionDelete, null, fakeID)}
+        </SortableItem>
+      ))}
     </tbody>
     )
   })
-  let latestItem
-  let tableChildren
 
   tableChildren = state.state === 'loading'
     ? <tr><td><span className='glyphicon glyphicon-refresh glyphicon-refresh-animate' /> Loading...</td></tr>
@@ -156,7 +156,8 @@ const BStrapDatagrid = ({
         const isScrollTo = state.store && state.store.cv && state.store.cv.scrollTo && r.id && state.store.cv.scrollTo
         const timeRestricted = (state.store && state.store.timeRestriction && state.store.timeRestriction.checkRow(state.store, r, state)) || undefined
         const disableAttrs = ((r.id === undefined || r.id === null) ||
-          (latestItem && latestItem === r.id && state.store && state.store.cv && state.store.cv.disableAttrs)) || undefined
+          (latestItem && latestItem === r.id && state.store && state.store.cv && state.store.cv.disableAttrs)) ||
+          undefined
         latestItem = r.id
 
         return (
@@ -164,19 +165,17 @@ const BStrapDatagrid = ({
             ? customRowStyleClass(r)
             : 'noClass' + (isScrollTo && r.id && isScrollTo === r.id ? ' show-scrollto' : '')
           }>
-            {
-              selectable && (
-                <td key='chbox'ref={i >= 0 ? (node) => refFn && refFn(node, r) : undefined}>
-                  { noDelete || disableAttrs || (!batchMenuControl && timeRestricted && timeRestricted > 0) // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
-                    ? null
-                    : <Checkbox checked={selected} inline onChange={() => onRowSelection(i)} />
-                  }
-                </td>
-              )
-            }
-            {
-              buildCells(attrs, fields, r, rowId, _renderCell, _renderRowActions, _renderRowActionDelete, disableAttrs)
-            }
+            {selectable && (
+              <td key='chbox'ref={i >= 0 ? (node) => refFn && refFn(node, r) : undefined}>
+                { noDelete || disableAttrs || (!batchMenuControl && timeRestricted && timeRestricted > 0) // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
+                  ? null
+                  : <Checkbox checked={selected} inline onChange={() => onRowSelection(i)} />
+                }
+              </td>
+            )}
+            {buildCells(
+              attrs, fields, r, rowId, _renderCell, _renderRowActions, _renderRowActionDelete, disableAttrs, fakeID
+            )}
           </tr>
         )
       })
@@ -186,16 +185,14 @@ const BStrapDatagrid = ({
       {titles ? (
         <thead>
           <tr>
-            { selectable && (
+            {selectable && (
               <th>
                 <div className='sort-buttons-box'>
                   <OverlayTrigger
                     placement='right'
-                    overlay={<Tooltip>{
-                      !sortstate._sortField
-                        ? 'Sets filters and sorting to the default state'
-                        : 'Reset filters and sorting to the clean state'
-                    }</Tooltip>}>
+                    overlay={<Tooltip>{!sortstate._sortField
+                      ? 'Sets filters and sorting to the default state'
+                      : 'Reset filters and sorting to the clean state'}</Tooltip>}>
                     <Button bsStyle={'default'} bsSize='xsmall' onClick={handleResetButton}>
                       <span className={'glyphicon glyphicon-ban-circle'} />
                     </Button>
@@ -203,38 +200,36 @@ const BStrapDatagrid = ({
                 </div>
               </th>
             )}
-            {
-              buildHeaders(attrs, titles, _renderHeader, listActionsRender,
-                onSort, sortstate, noSort, listActionDeleteRender)
-            }
-          </tr>
-          {
-            filters && (
-              <tr className='filter-row'>
-                {
-                  selectable && !noDelete ? <th key='chbox'>
-                    <Checkbox checked={allSelected} inline bsClass='btn' onChange={_onSelectAll} />
-                  </th> : (!selectable ? '' : <th/>)
-                }
-                {
-                  filters.map((i, idx) => <th key={idx}>{i}</th>)
-                }
-                {
-                  listActions ? <th key='0' /> : null
-                }
-              </tr>
+            {buildHeaders(
+              attrs, titles, _renderHeader, listActionsRender, onSort, sortstate, noSort, listActionDeleteRender, fakeID
             )}
+          </tr>
+          {filters && (
+            <tr className='filter-row'>
+              {selectable && !noDelete
+                ? <th key='chbox'>
+                  <Checkbox checked={allSelected} inline bsClass='btn' onChange={_onSelectAll} />
+                </th>
+                : (!selectable ? '' : <th/>)
+              }
+              {filters.map((i, idx) =>
+                <th key={idx}>{i}</th>
+              )}
+              {listActions
+                ? <th key='0' />
+                : null}
+            </tr>
+          )}
         </thead>
       ) : null}
-      {
-        dragbleListEntity
-          ? <SortableWrapper
-            helperClass={dragbleHelperClass}
-            items={rowItems}
-            buildCells={buildCells}
-            onSortEnd={dragbleListEntity.onDragEnd}
-            pressDelay={dragbleListEntity.dragToggleDelay} />
-          : <tbody>{tableChildren}</tbody>
+      {dragbleListEntity
+        ? <SortableWrapper
+          buildCells={buildCells}
+          helperClass={dragbleHelperClass}
+          items={rowItems}
+          onSortEnd={dragbleListEntity.onDragEnd}
+          pressDelay={dragbleListEntity.dragToggleDelay} />
+        : <tbody>{tableChildren}</tbody>
       }
     </table>
   )
