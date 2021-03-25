@@ -167,7 +167,7 @@ const BStrapDatagrid = ({
           }>
             {selectable && (
               <td key='chbox'ref={i >= 0 ? (node) => refFn && refFn(node, r) : undefined}>
-                { noDelete || disableAttrs || (!batchMenuControl && timeRestricted && timeRestricted > 0) // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
+                { noDelete || (disableAttrs && !fakeID) || (!batchMenuControl && timeRestricted && timeRestricted > 0) // can't compare ( timeRestricted === 0 ) when > 0 than is restricted
                   ? null
                   : <Checkbox checked={selected} inline onChange={() => onRowSelection(i)} />
                 }
