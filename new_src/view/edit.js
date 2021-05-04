@@ -39,6 +39,9 @@ const GlobalErrors = observer(({ errors }) => {
 
   componentDidMount () {
     document.addEventListener('keydown', this.onKeyDownActions, false)
+    if (this.props.store) {
+      this.props.store.modalIsOpen = false
+    }
   }
 
   componentWillUnmount () {
@@ -52,7 +55,7 @@ const GlobalErrors = observer(({ errors }) => {
     if (e.keyCode === 13) {
       // enter
       e.onKeyDownActions = true
-    } else if (e.keyCode === 27) {
+    } else if (e.keyCode === 27 && (!this.props.store || !this.props.store.modalIsOpen)) {
       // esc
       e.onKeyDownActions = true
       this.props.onReturn2list()
