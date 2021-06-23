@@ -37,17 +37,21 @@ const styles = {
 @observer
 class Controls extends FilterBases.ControlsBase {
   renderControl (filter, name, state, onHide, onUpdateValue) {
-    const toolTip = (
-      <Tooltip id="tooltip"><strong>{filter.info}</strong></Tooltip>
-    )
-
     return (
       <div className={`form-field form-group filter-${name}`} style={styles.chip} key={name}>
-        <OverlayTrigger placement="right" overlay={toolTip}>
-          <strong>{filter.title || name}</strong>
+        {filter.info && filter.info.length > 1
+        ? <OverlayTrigger placement='right' overlay={<Tooltip id='tooltip'>
+            <strong>{filter.info}</strong>
+          </Tooltip>}>
+          <strong>
+            {filter.title || name}&nbsp;<span className='glyphicon glyphicon-question-sign' />
+          </strong>
         </OverlayTrigger>
+       : <strong>
+          {filter.title || name}
+         </strong>}
         <InputGroup>
-          <Button onClick={onHide} style={{ float: 'left' }}>x</Button>
+          <Button onClick={onHide} style={{ float: 'left' }}><span className='glyphicon glyphicon-remove' /></Button>
           <div style={{ float: 'right' }}>
             <filter.component record={state.filters} attr={name} onChange={onUpdateValue}
               onKeyPress={(e) => {
