@@ -36,6 +36,14 @@ const BStrapListView = ({
     }
   })
 
+  if (store &&  store.store &&
+    store.store.lastUsedSelection &&
+    store.store.lastUsedSelection.length > 0
+  ) {
+    store.updateSelection(store.store.lastUsedSelection)
+    store.store.lastUsedSelection = []
+  }
+
   function onSelectionChange (selection) {
     if (shiftDown.get() && store.selection && store.selection.length > 0) {
       if (store.selection.length > 0) {
